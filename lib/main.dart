@@ -3,6 +3,8 @@ import 'package:music_player_blu/ViewModel/song_view_model.dart';
 import 'package:provider/provider.dart';
 import '../Model/song.dart';
 import '../Widget/SongListWidget.dart';
+import 'Model/API/api_response.dart';
+import 'Widget/PlayerWidget.dart';
 
 void main() {
   runApp(const MyApp());
@@ -82,33 +84,45 @@ class _MyHomePageState extends State<MyHomePage> {
       _searchArtist = name;
     }
   }
-  Widget songsWidget(BuildContext context) {
-    List<Song> songList = Song.songs;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Expanded(
-          flex: 8,
-          child: SongListWidget(Song.songs),
-        ),
-        // Expanded(
-        //   flex: 2,
-        //   child: Align(
-        //     alignment: Alignment.bottomCenter,
-        //     child: PlayerWidget(
-        //       function: () {
-        //         setState(() {});
-        //       },
-        //     ),
-        //   ),
-        // ),
-      ],
-    );
+  Widget songsWidget(BuildContext context, ApiResponse apiResponse) {
+    List<Song>? songList = apiResponse.data as List<Song>?;
+    switch (apiResponse.status) {
+      case Status.LOADING:
+        return Center(child: CircularProgressIndicator());
+      case Status.COMPLETED:
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Expanded(
+              flex: 8,
+              child: SongListWidget(songList!),
+            ),
+            Expanded(
+              flex: 2,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: PlayerWidget(
+                ),
+              ),
+            ),
+          ],
+        );
+      case Status.ERROR:
+        return Center(
+          child: Text('Error. Try again'),
+        );
+      case Status.INITIAL:
+      default:
+        return Center(
+          child: Text('Search by artist'),
+        );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final _inputController = TextEditingController();
+    ApiResponse apiResponse = Provider.of<SongViewModel>(context).response;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -134,13 +148,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   onChanged: (value){},
                   onFieldSubmitted: (value){
                     if(value.isNotEmpty){
-                      searchArtist(value);
+                      Provider.of<SongViewModel>(context, listen: false)
+                          .setSelectedSong(null);
+                      Provider.of<SongViewModel>(context, listen: false)
+                          .fetchData(value);
                     }
                   },
                 )),
             if(_searchArtist.isNotEmpty) Text(_searchArtist),
             Expanded(child:
-                songsWidget(context)
+                songsWidget(context, apiResponse)
             ),
           ],
         ),

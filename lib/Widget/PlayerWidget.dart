@@ -1,5 +1,4 @@
-import 'dart:convert';
-import 'dart:html';
+import 'dart:developer';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
@@ -41,44 +40,70 @@ class _PlayerWidgetState extends State<PlayerWidget> {
         duration = newDuration;
       });
     });
+    audioplayer.onPlayerComplete.listen((event) {
+      setState(() {
+        position = Duration.zero;
+        duration = Duration.zero;
+        isPlaying = false;
+      });
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    audioplayer.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     Song? currentSong = Provider.of<SongViewModel>(context).song;
-    return Column(
-      children: [
-        CircleAvatar(
-            radius: 10.0,
-            child: IconButton(
-                icon: Icon(isPlaying ? Icons.play_arrow : Icons.pause),
-                iconSize: 35.0,
-                onPressed: () async {
-                  if (isPlaying) {
-                    await audioplayer.pause();
-                  } else {
-                    Url source = currentSong!.songMedia as Url;
-                    await audioplayer.play(source as Source,
-                        position: position);
-                  }
-                })),
-        Slider(
-            min: 0,
-            max: duration.inSeconds.toDouble(),
-            value: position.inSeconds.toDouble(),
-            onChanged: (value) async {}),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(formatTime(position)),
-              Text(formatTime(duration)),
-            ],
+    return Container(
+      color: Colors.grey,
+      child: Column(
+        children: [
+          SizedBox(
+            height: 10.0,
           ),
-        )
-      ],
+          CircleAvatar(
+              radius: 25.0,
+              child: IconButton(
+                  icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+                  iconSize: 25.0,
+                  onPressed: () async {
+                    if (isPlaying) {
+                      // debugPrint("isPlaying");
+                      await audioplayer.pause();
+                      // isPlaying = false;
+                    } else {
+                      // var url = Uri.parse(currentSong!.songMedia);
+                      await audioplayer.play(UrlSource(currentSong!.songMedia),
+                          position: position);
+                      // isPlaying = true;
+                    }
+                  })),
+          Slider(
+              min: 0,
+              max: duration.inSeconds.toDouble(),
+              value: position.inSeconds.toDouble(),
+              onChanged: (value) async {
+                final position = Duration(seconds: value.toInt());
+                await audioplayer.seek(position);
+                // await audioplayer.resume();
+              }),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(formatTime(position)),
+                Text(formatTime(duration)),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 
