@@ -65,7 +65,8 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   }
 
   Future<void> _play(Song song) async {
-    final result = await audioplayer.play(UrlSource(song.songMedia), position: position);
+    final result =
+        await audioplayer.play(UrlSource(song.songMedia), position: position);
     return result;
   }
 
@@ -97,22 +98,28 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                       _play(currentSong);
                     }
                   })),
-          Slider(
-              min: 0,
-              max: duration.inSeconds.toDouble(),
-              value: position.inSeconds.toDouble(),
-              onChanged: (value) async {
-                final position = Duration(seconds: value.toInt());
-                await audioplayer.seek(position);
-              }),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(formatTime(position)),
-                Text(formatTime(duration)),
-              ],
+          Expanded(
+            flex: 1,
+              child: Slider(
+                  min: 0,
+                  max: duration.inSeconds.toDouble(),
+                  value: position.inSeconds.toDouble(),
+                  onChanged: (value) async {
+                    final position = Duration(seconds: value.toInt());
+                    await audioplayer.seek(position);
+                  })),
+          Expanded(
+            flex: 1,
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(formatTime(position)),
+                  Text(formatTime(duration)),
+                ],
+              ),
             ),
           )
         ],

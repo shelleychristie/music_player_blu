@@ -91,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
                 child: TextFormField(
                   decoration: const InputDecoration(
                     fillColor: Colors.white60,
