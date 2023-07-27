@@ -21,6 +21,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   bool isPlaying = false;
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
+  String? prevSongId;
 
   @override
   void initState() {
@@ -56,14 +57,42 @@ class _PlayerWidgetState extends State<PlayerWidget> {
     super.dispose();
   }
 
+  void _playCurrentSong(Song? song) {
+    if (song != null && prevSongId != song.songId) {
+      prevSongId = song.songId;
+      // we need prevSongId so we're not calling play() every time we build
+      // which would result in infinite loop
+      // log("song is not null");
+      _play(song);
+    }
+  }
+
+  Future<void> _play(Song song) async {
+    // log("play 1");
+    log(isPlaying.toString());
+    final result = await audioplayer.play(UrlSource(song!.songMedia), position: position);
+    // log("play 2");
+    // setState(() {
+    //   duration = Duration.zero;
+    //   position = Duration.zero;
+    //   isPlaying = true;
+    // });
+    // log("play 3");
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     Song? currentSong = Provider.of<SongViewModel>(context).song;
+    _playCurrentSong(currentSong);
+    // log("build player widget");
+    // log("position " + position.toString());
+    // log("duration " + duration.toString());
     return Container(
       color: Colors.grey,
       child: Column(
         children: [
-          SizedBox(
+          const SizedBox(
             height: 10.0,
           ),
           CircleAvatar(
@@ -72,15 +101,18 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                   icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
                   iconSize: 25.0,
                   onPressed: () async {
-                    if (isPlaying) {
+                    if (currentSong == null) {
+                      var nullSongSnackBar =
+                          const SnackBar(content: Text("No song is selected"));
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(nullSongSnackBar);
+                    } else if (isPlaying) {
                       // debugPrint("isPlaying");
                       await audioplayer.pause();
                       // isPlaying = false;
                     } else {
                       // var url = Uri.parse(currentSong!.songMedia);
-                      await audioplayer.play(UrlSource(currentSong!.songMedia),
-                          position: position);
-                      // isPlaying = true;
+                      _play(currentSong);
                     }
                   })),
           Slider(
@@ -90,7 +122,6 @@ class _PlayerWidgetState extends State<PlayerWidget> {
               onChanged: (value) async {
                 final position = Duration(seconds: value.toInt());
                 await audioplayer.seek(position);
-                // await audioplayer.resume();
               }),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
