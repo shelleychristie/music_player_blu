@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:music_player_blu/ViewModel/song_view_model.dart';
 import 'package:provider/provider.dart';
 import '../Model/song.dart';
-import '../Widget/SongListWidget.dart';
+import '../Widget/song_list_widget.dart';
 import 'Model/API/api_response.dart';
-import 'Widget/PlayerWidget.dart';
+import 'Widget/player_widget.dart';
 
 void main() {
   runApp(const MyApp());
@@ -69,21 +69,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String _selectedTrackID = "";
-  String _searchArtist = "";
 
-
-  void changeSong(String id){
-    setState(){
-      _selectedTrackID = id;
-    }
-  }
-
-  void searchArtist(String name){
-    setState(){
-      _searchArtist = name;
-    }
-  }
   Widget songsWidget(BuildContext context, ApiResponse apiResponse) {
     List<Song>? songList = apiResponse.data as List<Song>?;
     switch (apiResponse.status) {
@@ -133,9 +119,9 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Padding(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 child: TextFormField(
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     fillColor: Colors.white60,
                     filled: true,
                     hintText: "Search artist",
@@ -155,7 +141,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     }
                   },
                 )),
-            if(_searchArtist.isNotEmpty) Text(_searchArtist),
             Expanded(child:
                 songsWidget(context, apiResponse)
             ),
