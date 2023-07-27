@@ -48,7 +48,7 @@ android {
         applicationId "com.example.music_player_blu"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
+        minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -68,6 +68,13 @@ flutter {
 }
 
 dependencies {
+    def appCenterSdkVersion = '4.4.5'
+
+    implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
+
+    implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
+
+    implementation "com.microsoft.appcenter:appcenter-distribute:${appCenterSdkVersion}"
     constraints {
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0") {
             because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
