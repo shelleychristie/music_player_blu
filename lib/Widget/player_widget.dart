@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -62,22 +60,12 @@ class _PlayerWidgetState extends State<PlayerWidget> {
       prevSongId = song.songId;
       // we need prevSongId so we're not calling play() every time we build
       // which would result in infinite loop
-      // log("song is not null");
       _play(song);
     }
   }
 
   Future<void> _play(Song song) async {
-    // log("play 1");
-    log(isPlaying.toString());
-    final result = await audioplayer.play(UrlSource(song!.songMedia), position: position);
-    // log("play 2");
-    // setState(() {
-    //   duration = Duration.zero;
-    //   position = Duration.zero;
-    //   isPlaying = true;
-    // });
-    // log("play 3");
+    final result = await audioplayer.play(UrlSource(song.songMedia), position: position);
     return result;
   }
 
@@ -85,9 +73,6 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   Widget build(BuildContext context) {
     Song? currentSong = Provider.of<SongViewModel>(context).song;
     _playCurrentSong(currentSong);
-    // log("build player widget");
-    // log("position " + position.toString());
-    // log("duration " + duration.toString());
     return Container(
       color: Colors.grey,
       child: Column(
@@ -107,11 +92,8 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                       ScaffoldMessenger.of(context)
                           .showSnackBar(nullSongSnackBar);
                     } else if (isPlaying) {
-                      // debugPrint("isPlaying");
                       await audioplayer.pause();
-                      // isPlaying = false;
                     } else {
-                      // var url = Uri.parse(currentSong!.songMedia);
                       _play(currentSong);
                     }
                   })),
@@ -124,7 +106,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                 await audioplayer.seek(position);
               }),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

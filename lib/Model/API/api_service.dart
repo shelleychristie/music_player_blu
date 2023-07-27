@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'api_constants.dart';
 
@@ -14,11 +13,11 @@ class ApiService {
         responseJson = jsonDecode(response.body);
       } else {
         responseJson = returnResponse(response);
-        debugPrint("debug1 " + responseJson.toString());
+        log("debug1 $responseJson");
       }
       return responseJson;
     } catch (e) {
-      log("catch e in api service" + e.toString());
+      log("catch e in api service$e");
     }
   }
 
@@ -28,7 +27,6 @@ class ApiService {
         log("case 200");
         // log(response.body.toString());
         dynamic responseJson = jsonDecode(response.body);
-        // log("AAAAAAAAAAAAAAAAAAAAA");
         return responseJson;
       case 400:
         log("case 400");

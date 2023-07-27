@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:music_player_blu/ViewModel/song_view_model.dart';
@@ -21,7 +23,7 @@ class _SongListWidgetState extends State<SongListWidget> {
   Widget _buildSongItem(Song song) {
     Song? currentSong = Provider.of<SongViewModel>(context).song;
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+      padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
       child: Row(children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(10.0),
@@ -34,20 +36,20 @@ class _SongListWidgetState extends State<SongListWidget> {
         const SizedBox(width: 5.0),
         Expanded(
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // song title text
                 Text(song.songTitle,
-                    style: TextStyle(fontSize: 16.0,),
+                    style: const TextStyle(fontSize: 16.0,),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1),
                 const SizedBox(
                   height: 5.0,
                 ),
                 Text(song.artistName,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 10.0,
                       color: Colors.grey,
                     ),
@@ -57,7 +59,7 @@ class _SongListWidgetState extends State<SongListWidget> {
                   height: 3.0,
                 ),
                 Text(song.albumTitle,
-                    style: TextStyle(fontSize: 10.0, color: Colors.grey),
+                    style: const TextStyle(fontSize: 10.0, color: Colors.grey),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1),
               ],
@@ -87,12 +89,12 @@ class _SongListWidgetState extends State<SongListWidget> {
               itemBuilder: (BuildContext context, int index) {
                 Song data = widget.songList[index];
                 return Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                  padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
                   child:
                     InkWell(
                       child: _buildSongItem(data),
                       onTap: () {
-                        debugPrint("tap on song ${data.songTitle}");
+                        log("tap on song ${data.songTitle}");
                         if (data.songId.isNotEmpty) {
                           Provider.of<SongViewModel>(context, listen: false).setSelectedSong(data);
                         }
@@ -101,7 +103,7 @@ class _SongListWidgetState extends State<SongListWidget> {
                 );
               },
               separatorBuilder: (context, index) {
-                return Divider();
+                return const Divider();
               },
               itemCount: widget.songList.length,
             ),
